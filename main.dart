@@ -1,23 +1,18 @@
 import 'package:flutter/material.dart';
-import 'package:mnv/column_row.dart';
-import 'package:mnv/row.dart';
-import 'day2.dart';
-import 'home.dart';
+import 'package:mnv/snackbar_ex.dart';
+
+import 'instagramlogin.dart';
+import 'instalogin.dart';
 
 void main() {
   runApp(const MyApp());
-
-  App app = App(); //class object declaration
 }
 
-class App extends MyApp{ //inheritance child class is App and parent is MyApp
-
-}
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   // This widget is the root of your application.
-  @override //dart cannot support method overloading
+  @override
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Flutter Demo',
@@ -37,9 +32,9 @@ class MyApp extends StatelessWidget {
         //
         // This works for code too, not just values: Most code changes can be
         // tested with just a hot reload.
-        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.white),
       ),
-      home: cr()
+      home: insta_login()
     );
   }
 }

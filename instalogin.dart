@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 final TextEditingController usernameController = TextEditingController();
 final TextEditingController passwordController = TextEditingController();
 
-class login_page extends StatelessWidget {
-  login_page({super.key});
+class insta_login extends StatelessWidget {
+  insta_login({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -19,23 +19,22 @@ class login_page extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // 1. UserName Field:
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                    width: 200,
+                    width: 400,
                     child: TextField(
                       controller: usernameController,
                       keyboardType: TextInputType.text,
                       style: const TextStyle(color: Colors.blueAccent),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person),
                         fillColor: Colors.transparent,
                         filled: true,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.zero,
+                          borderSide: BorderSide(strokeAlign: )
                         ),
-                        label: const Text("Username"),
+                        label: const Text("Phone number,email or username"),
                       ),
                     ),
                   ),
@@ -45,7 +44,7 @@ class login_page extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: SizedBox(
-                    width: 200,
+                    width: 400,
                     child: TextField(
                       controller: passwordController,
                       maxLength: 10,
@@ -53,11 +52,10 @@ class login_page extends StatelessWidget {
                       keyboardType: TextInputType.number,
                       style: const TextStyle(color: Colors.blueAccent),
                       decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
                         fillColor: Colors.transparent,
                         filled: true,
                         border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
+                          borderRadius: BorderRadius.zero,
                         ),
                         label: const Text("Password"),
                       ),
