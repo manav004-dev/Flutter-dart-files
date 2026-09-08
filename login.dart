@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import 'package:manav/login/login_controller.dart';
 
-final TextEditingController usernameController = TextEditingController();
-final TextEditingController passwordController = TextEditingController();
+class LoginPage extends StatelessWidget {
+  LoginPage({super.key});
 
-class login_page extends StatelessWidget {
-  login_page({super.key});
+  final TextEditingController usernameController = TextEditingController();
+  final TextEditingController passwordController = TextEditingController();
+
+  // Inject the controller instance
+  final LoginController controller = Get.put(LoginController());
 
   @override
   Widget build(BuildContext context) {
@@ -40,7 +45,6 @@ class login_page extends StatelessWidget {
                     ),
                   ),
                 ),
-
                 // 2. Password Field:
                 Padding(
                   padding: const EdgeInsets.all(8.0),
@@ -49,8 +53,8 @@ class login_page extends StatelessWidget {
                     child: TextField(
                       controller: passwordController,
                       maxLength: 10,
-                      obscureText: true, // Recommended: Hides text input for passwords
-                      keyboardType: TextInputType.number,
+                      obscureText: true,
+                      keyboardType: TextInputType.text, // Changed to text to match alpha-numeric strings
                       style: const TextStyle(color: Colors.blueAccent),
                       decoration: InputDecoration(
                         prefixIcon: const Icon(Icons.lock),
@@ -64,15 +68,21 @@ class login_page extends StatelessWidget {
                     ),
                   ),
                 ),
+                const SizedBox(height: 10),
 
-                const SizedBox(height: 10), // Adds direct breathing room before button
-
-                ElevatedButton(
+                // Show a loading circle or the login button based on state
+                Obx(() => controller.isLoading.value
+                    ? const CircularProgressIndicator()
+                    : ElevatedButton(
                   onPressed: () {
-                    // Fixed: Changed from 'name.text' to read from 'usernameController.text'
-                    print(usernameController.text);
+                    // Trigger action with current values
+                    controller.loginCount(
+                      usernameController.text.trim(),
+                      passwordController.text.trim(),
+                    );
                   },
                   child: const Text('Login'),
+                ),
                 ),
               ],
             ),
