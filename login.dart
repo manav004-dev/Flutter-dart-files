@@ -1,90 +1,202 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:manav/login/login_controller.dart';
 
-class LoginPage extends StatelessWidget {
-  LoginPage({super.key});
+import 'package:mnv/login/login_controller.dart';
 
-  final TextEditingController usernameController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+class LoginPage extends StatefulWidget {
+  const LoginPage({
+    super.key,
+  });
 
-  // Inject the controller instance
-  final LoginController controller = Get.put(LoginController());
+  @override
+  State<LoginPage> createState() =>
+      _LoginPageState();
+}
+
+class _LoginPageState extends State<LoginPage> {
+  // Username controller
+  final TextEditingController usernameController =
+  TextEditingController();
+
+  // Password controller
+  final TextEditingController passwordController =
+  TextEditingController();
+
+  // GetX controller
+  late final LoginController controller;
+
+  @override
+  void initState() {
+    super.initState();
+
+    controller = Get.put(
+      LoginController(),
+    );
+  }
+
+  @override
+  void dispose() {
+    usernameController.dispose();
+    passwordController.dispose();
+
+    Get.delete<LoginController>();
+
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
-    final screenHeight = MediaQuery.of(context).size.height;
-
     return Scaffold(
-      body: SingleChildScrollView(
-        child: SizedBox(
-          height: screenHeight,
-          child: Center(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // 1. UserName Field:
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 200,
-                    child: TextField(
-                      controller: usernameController,
-                      keyboardType: TextInputType.text,
-                      style: const TextStyle(color: Colors.blueAccent),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.person),
-                        fillColor: Colors.transparent,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        label: const Text("Username"),
-                      ),
-                    ),
-                  ),
-                ),
-                // 2. Password Field:
-                Padding(
-                  padding: const EdgeInsets.all(8.0),
-                  child: SizedBox(
-                    width: 200,
-                    child: TextField(
-                      controller: passwordController,
-                      maxLength: 10,
-                      obscureText: true,
-                      keyboardType: TextInputType.text, // Changed to text to match alpha-numeric strings
-                      style: const TextStyle(color: Colors.blueAccent),
-                      decoration: InputDecoration(
-                        prefixIcon: const Icon(Icons.lock),
-                        fillColor: Colors.transparent,
-                        filled: true,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(20),
-                        ),
-                        label: const Text("Password"),
-                      ),
-                    ),
-                  ),
-                ),
-                const SizedBox(height: 10),
+      appBar: AppBar(
+        title: const Text(
+          'Login',
+        ),
+      ),
 
-                // Show a loading circle or the login button based on state
-                Obx(() => controller.isLoading.value
-                    ? const CircularProgressIndicator()
-                    : ElevatedButton(
-                  onPressed: () {
-                    // Trigger action with current values
-                    controller.loginCount(
-                      usernameController.text.trim(),
-                      passwordController.text.trim(),
-                    );
-                  },
-                  child: const Text('Login'),
-                ),
-                ),
-              ],
+      body: SafeArea(
+        child: Center(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.all(24),
+
+            child: ConstrainedBox(
+              constraints:
+              const BoxConstraints(
+                maxWidth: 400,
+              ),
+
+              child: Column(
+                mainAxisAlignment:
+                MainAxisAlignment.center,
+
+                children: [
+
+                  // =========================
+                  // USERNAME
+                  // =========================
+
+                  TextField(
+                    controller:
+                    usernameController,
+
+                    keyboardType:
+                    TextInputType.emailAddress,
+
+                    textInputAction:
+                    TextInputAction.next,
+
+                    decoration:
+                    InputDecoration(
+                      prefixIcon:
+                      const Icon(
+                        Icons.person,
+                      ),
+
+                      labelText:
+                      'Username / Email',
+
+                      border:
+                      OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.circular(
+                          20,
+                        ),
+                      ),
+                    ),
+                  ),
+
+                  const SizedBox(
+                    height: 16,
+                  ),
+
+                  // =========================
+                  // PASSWORD
+                  // =========================
+
+                  TextField(
+                    controller:
+                    passwordController,
+
+                    obscureText: true,
+
+                    textInputAction:
+                    TextInputAction.done,
+
+                    decoration:
+                    InputDecoration(
+                      prefixIcon:
+                      const Icon(
+                        Icons.lock,
+                      ),
+
+                      labelText:
+                      'Password',
+
+                      border:
+                      OutlineInputBorder(
+                        borderRadius:
+                        BorderRadius.circular(
+                          20,
+                        ),
+                      ),
+                    ),
+
+                    onSubmitted: (_) {
+                      controller.loginCount(
+                        usernameController.text,
+                        passwordController.text,
+                      );
+                    },
+                  ),
+
+                  const SizedBox(
+                    height: 24,
+                  ),
+
+                  // =========================
+                  // LOGIN BUTTON
+                  // =========================
+
+                  Obx(
+                        () {
+                      if (controller
+                          .isLoading.value) {
+                        return const SizedBox(
+                          height: 50,
+
+                          child: Center(
+                            child:
+                            CircularProgressIndicator(),
+                          ),
+                        );
+                      }
+
+                      return SizedBox(
+                        width:
+                        double.infinity,
+
+                        height: 50,
+
+                        child:
+                        ElevatedButton(
+                          onPressed: () {
+                            controller
+                                .loginCount(
+                              usernameController
+                                  .text,
+                              passwordController
+                                  .text,
+                            );
+                          },
+
+                          child: const Text(
+                            'Login',
+                          ),
+                        ),
+                      );
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
         ),

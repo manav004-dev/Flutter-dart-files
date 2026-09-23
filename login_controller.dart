@@ -1,26 +1,80 @@
 import 'package:get/get.dart';
-import 'package:manav/api/api_services.dart';
-import 'package:manav/login/login_model.dart';
+
+import 'package:mnv/api/api_services.dart';
+import 'package:mnv/login/login_model.dart';
 
 class LoginController extends GetxController {
-  var isLoading = false.obs;
+  final RxBool isLoading = false.obs;
 
-  Future<void> loginCount(String username, String password) async {
+  Future<void> loginCount(
+      String username,
+      String password,
+      ) async {
+    // Check username
+    if (username.trim().isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Please enter username.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
+    // Check password
+    if (password.trim().isEmpty) {
+      Get.snackbar(
+        'Validation Error',
+        'Please enter password.',
+        snackPosition: SnackPosition.BOTTOM,
+      );
+
+      return;
+    }
+
     try {
+      // Start loading
       isLoading.value = true;
 
-      // Call api service and catch return value
-      LoginModel respo = await ApiServices().login(username: username, password: password);
+      // Call API
+      final LoginModel response =
+      await ApiServices().login(
+        username: username.trim(),
+        password: password,
+      );
 
-      if (respo.responseCode.toString() == "1") {
-        Get.snackbar("Success", respo.message ?? "Logged in successfully!");
-        // Navigate to your home dashboard screen here if needed, e.g., Get.to(Dashboard());
+      // Check API response
+      if (response.responseCode.toString() == '1') {
+        Get.snackbar(
+          'Success',
+          response.message ??
+              'Login successful!',
+          snackPosition: SnackPosition.BOTTOM,
+        );
+
+        // Navigate after successful login
+        //
+        // Example:
+        // Get.off(() => const BookingPage());
       } else {
-        Get.snackbar("Failed", respo.message ?? "Invalid credentials");
+        Get.snackbar(
+          'Login Failed',
+          response.message ??
+              'Invalid username or password.',
+          snackPosition: SnackPosition.BOTTOM,
+        );
       }
     } catch (e) {
-      Get.snackbar("Error", "Something went wrong.");
+      Get.snackbar(
+        'Error',
+        e.toString().replaceFirst(
+          'Exception: ',
+          '',
+        ),
+        snackPosition: SnackPosition.BOTTOM,
+      );
     } finally {
+      // Stop loading
       isLoading.value = false;
     }
   }

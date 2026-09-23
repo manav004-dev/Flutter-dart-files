@@ -1,28 +1,58 @@
 import 'dart:convert';
+
 import 'package:http/http.dart' as http;
-import 'package:manav/login/login_model.dart'; // Make sure this path matches your project structure
+import 'package:mnv/login/login_model.dart';
 
 class ApiServices {
-  Future<LoginModel> login({required String username, required String password}) async {
+  static const String loginUrl =
+      'https://www.anniecabs.com/LJ/index.php/api/login';
+
+  Future<LoginModel> login({
+    required String username,
+    required String password,
+  }) async {
     try {
       final response = await http.post(
-        Uri.parse("https://www.anniecabs.com/LJ/index.php/api/login"),
+        Uri.parse(loginUrl),
+        headers: {
+          'Accept': 'application/json',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
         body: {
-          'email': username, // Check your API docs to see if it expects 'email' or 'username'
+          'email': username,
           'password': password,
         },
       );
 
-      if (response.statusCode == 200 || response.statusCode == 201) {
-        // Decode the raw string body into a Map before parsing
-        final Map<String, dynamic> decodedData = jsonDecode(response.body);
-        return LoginModel.fromJson(decodedData);
-      } else {
-        throw Exception("Server Error: ${response.statusCode}");
+      print('Status Code: ${response.statusCode}');
+      print('Response: ${response.body}');
+
+      if (response.statusCode != 200 &&
+          response.statusCode != 201) {
+        throw Exception(
+          'Server Error: ${response.statusCode}',
+        );
       }
+
+      final dynamic decodedData =
+      jsonDecode(response.body);
+
+      if (decodedData is! Map<String, dynamic>) {
+        throw Exception(
+          'Invalid response format from server',
+        );
+      }
+
+      return LoginModel.fromJson(decodedData);
     } catch (e) {
-      print(e.toString());
-      throw Exception("Failed to log in: $e");
+      print('API Error: $e');
+
+      throw Exception(
+        e.toString().replaceFirst(
+          'Exception: ',
+          '',
+        ),
+      );
     }
   }
 }
